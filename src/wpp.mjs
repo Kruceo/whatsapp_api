@@ -6,7 +6,7 @@ export class Wpp {
         this.ready = false
         this.client = new wwjs.Client({
             puppeteer: {
-                userDataDir: './data/user',
+                userDataDir: '/tmp/whatsapp_api/user',
                 // headless:false,
                 args: ['--no-sandbox'],
             }
@@ -14,8 +14,8 @@ export class Wpp {
 
         this.client.on('qr', (qr) => {
             console.log('creating qrcode')
-            if (!fs.existsSync("./data")) fs.mkdirSync('./data/')
-            qrcode.toFile('./data/qr.png', qr)
+            if (!fs.existsSync("/tmp/whatsapp_api/")) fs.mkdirSync('/tmp/whatsapp_api/')
+            qrcode.toFile('/tmp/whatsapp_api/qr.png', qr)
         })
         this.client.on('message',(msg)=>{
             console.log(msg.from)
