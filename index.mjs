@@ -16,7 +16,6 @@ app.post('/private/send/message', async (req, res) => {
      * @type {{text,number}}
      */
     let { message, number } = req.body
-    console.log(req.body)
     if (!message || !number) {
 
         res.statusCode = 401
@@ -38,7 +37,6 @@ app.post('/group/send/message', async (req, res) => {
      * @type {{text,number}}
      */
     let { message, name } = req.body
-    console.log(req.body)
     if (!message || !name) {
 
         res.statusCode = 401
@@ -50,6 +48,7 @@ app.post('/group/send/message', async (req, res) => {
         res.send({ success: true, message: "message sent" })
         return;
     } catch (error) {
+        console.log(error)
         res.statusCode = 401
         res.send({ success: false, message: error })
     }
@@ -72,6 +71,7 @@ app.post('/private/send/file', async (req, res) => {
         res.send({ success: true, message: "file sent" })
         return;
     } catch (error) {
+        console.log(error)
         res.statusCode = 401
         res.send({ success: false, message: error })
     }
@@ -94,6 +94,7 @@ app.post('/group/send/file', async (req, res) => {
         res.send({ success: true, message: "file sent" })
         return;
     } catch (error) {
+        console.log(error)
         res.statusCode = 401
         res.send({ success: false, message: error })
     }
