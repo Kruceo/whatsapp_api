@@ -7,7 +7,7 @@ export class Wpp {
         this.client = new wwjs.Client({
             puppeteer: {
                 userDataDir: '/tmp/whatsapp_api/user',
-                // headless:false,
+                headless: 'new',
                 args: ['--no-sandbox'],
             }
         })
@@ -15,27 +15,33 @@ export class Wpp {
         this.client.on('qr', (qr) => {
             console.log('creating qrcode')
             if (!fs.existsSync("/tmp/whatsapp_api/")) fs.mkdirSync('/tmp/whatsapp_api/')
-            qrcode.toFile('/tmp/whatsapp_api/qr.png', qr)
-        })
-        this.client.on('message',(msg)=>{
-            console.log(msg.from)
+            qrcode.toFile('/tmp/whatsapp_api/' + (new Date()).getTime() + 'qr.png', qr, (err) => {
+                if (err) {
+                    console.log('impossible to write qrcode')
+                    console.log(err)
+                }
+            })
         })
     }
 
     async init() {
-        new Promise((resolve, err) => {
+        try {
+            console.log('initializing')
             this.client.on('ready', () => {
-                console.log('ready')
+                console.log('whatsapp ready')
                 this.ready = true
-                resolve(true)
+                // resolve(true)
             })
             this.client.on('auth_failure', () => {
-                console.log('not ready')
-                err(false)
+                console.log('whatsapp failure')
+                // err(false)
             })
-        })
-        await this.client.initialize()
-        
+            this.client.initialize()
+        } catch (error) {
+            console.log(error)
+        }
+
+
     }
     /**
      * 
@@ -65,7 +71,7 @@ export class Wpp {
 
         console.log("sending media message to number \"" + n + "\"")
 
-        await this.client.sendMessage(n,toSend, { caption: message })
+        await this.client.sendMessage(n, toSend, { caption: message })
 
     }
     async sendMessageToNumber(message, number) {
@@ -80,12 +86,12 @@ export class Wpp {
         return selected
     }
 
-    static formatNumber(num){
+    static formatNumber(num) {
         let n = num
-        if(num.length >12){
-            let dddPlus = num.slice(0,4)
-            let content = num.slice(5,num.length)
-            n = dddPlus + ""+ content
+        if (num.length > 12) {
+            let dddPlus = num.slice(0, 4)
+            let content = num.slice(5, num.length)
+            n = dddPlus + "" + content
         }
         n += "@c.us"
         return n
