@@ -1,13 +1,15 @@
-import { Client } from "whatsapp-web.js"
-
-
 import express from 'express'
 import { Wpp } from "./src/wpp.mjs"
 
 const app = express()
 
-const wpp = new Wpp()
+const cf = (()=>{
+    const ind = process.argv.indexOf('-cf')
+    if(ind != -1)return process.argv[ind + 1]
+})()
+console.log("using config folder: "+(cf??"./tmp_data"))
 
+const wpp = new Wpp(cf)
 
 app.use(express.json())
 
@@ -100,24 +102,24 @@ app.post('/group/send/file', async (req, res) => {
     }
 })
 
-app.get('/on/message/stream', async (req, res) => {
-    res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Transfer-Encoding', 'chunked');
-    wpp.client.on('message', (message) => {
-        res.write(JSON.stringify({
-            message
-        }))
-    })
-})
-app.get('/on/message', async (req, res) => {
-    res.setHeader('Content-Type', 'application/json');
-    // res.setHeader('Transfer-Encoding', 'chunked');
-    wpp.client.on('message', (message) => {
-        res.send(JSON.stringify({
-            message
-        }))
-    })
-})
+// app.get('/on/message/stream', async (req, res) => {
+//     res.setHeader('Content-Type', 'application/json');
+//     res.setHeader('Transfer-Encoding', 'chunked');
+//     wpp.client.on('message', (message) => {
+//         res.write(JSON.stringify({
+//             message
+//         }))
+//     })
+// })
+// app.get('/on/message', async (req, res) => {
+//     res.setHeader('Content-Type', 'application/json');
+//     // res.setHeader('Transfer-Encoding', 'chunked');
+//     wpp.client.on('message', (message) => {
+//         res.send(JSON.stringify({
+//             message
+//         }))
+//     })
+// })
 await wpp.init()
 app.listen("8080", () => {
     console.log('server listen 8080')
